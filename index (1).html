@@ -1,0 +1,549 @@
+<title>Water Cycle Lab</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
+<style>
+/* Layout: one reading column of lab stations that go from the ocean up to the clouds, with a wide model-building station near the end */
+:root{
+  --bg:#eaf4f7;      /* morning mist */
+  --surface:#ffffff;
+  --ink:#0f2a3a;     /* deep water */
+  --muted:#4d6878;
+  --sea:#0d68a6;
+  --sky:#3fa9d8;
+  --sun:#e9a91c;
+  --leaf:#2f8f57;
+  --line:#cfe2ea;
+  --good:#24804a; --bad:#bf3b2c;
+  --display:"Baloo 2", "Trebuchet MS", sans-serif;
+  --body:"Atkinson Hyperlegible", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0c1a22;--surface:#132733;--ink:#e3f1f6;--muted:#9fbccb;--sea:#5fb3ec;--sky:#7fd0f2;--sun:#f5c451;--leaf:#6ccf93;--line:#24404f;--good:#6ccf93;--bad:#f08a7b;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0c1a22;--surface:#132733;--ink:#e3f1f6;--muted:#9fbccb;--sea:#5fb3ec;--sky:#7fd0f2;--sun:#f5c451;--leaf:#6ccf93;--line:#24404f;--good:#6ccf93;--bad:#f08a7b;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:1.08rem/1.6 var(--body);margin:0}
+.wrap{max-width:940px;margin:0 auto;padding-block:24px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:26px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;line-height:1.1;margin:0}
+h1{font-size:clamp(2.3rem,7vw,3.8rem);color:var(--sea);font-weight:800}
+h2{font-size:clamp(1.55rem,4.2vw,2.1rem);font-weight:800}
+h3{font-size:1.25rem;font-weight:700}
+p{margin:0;max-width:66ch}
+.eyebrow{font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.hero{display:flex;flex-direction:column;gap:12px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-size:.8rem;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:3px 10px;color:var(--muted)}
+.ican{border:2px solid var(--sea);border-radius:14px;padding:16px 18px;background:var(--surface);display:flex;flex-direction:column;gap:8px}
+.ican ul{margin:0;padding:0;list-style:none;display:grid;gap:6px}
+.ican li{display:flex;gap:10px;align-items:flex-start}
+.ican input{width:22px;height:22px;flex:none;margin-top:3px;accent-color:var(--leaf)}
+section.st{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:14px}
+.sec-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.num{font-family:var(--display);color:var(--sky);font-weight:800;letter-spacing:.04em}
+.ican-tag{font-size:.9rem;color:var(--leaf);font-weight:700}
+button{font:inherit;cursor:pointer}
+.btn{border:2px solid var(--ink);background:var(--surface);color:var(--ink);border-radius:12px;padding:8px 14px;font-weight:700}
+.btn:hover{background:var(--bg)}
+.btn.primary{background:var(--sea);border-color:var(--sea);color:#fff}
+.btn.listen{border-color:var(--sky);color:var(--sea);font-size:.9rem;padding:5px 12px}
+.btn[aria-pressed=true]{background:var(--ink);color:var(--surface)}
+.btn:disabled{opacity:.45;cursor:default}
+:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.key{border-left:5px solid var(--sun);padding:8px 12px;background:var(--bg);border-radius:0 10px 10px 0}
+/* water grid */
+.grid100{display:grid;grid-template-columns:repeat(20,1fr);gap:3px;max-width:520px}
+.grid100 span{aspect-ratio:1;border-radius:3px;background:var(--sea)}
+.grid100 span.ice{background:#dff3ff;outline:1px solid var(--sky)}
+.grid100 span.fresh{background:var(--leaf)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.95rem}
+.legend i{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:6px;vertical-align:-2px}
+/* states */
+.states{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:center}
+@media (max-width:680px){.states{grid-template-columns:1fr}}
+#box{width:100%;aspect-ratio:3/2;max-width:100%;border-radius:12px;background:var(--bg);border:2px solid var(--line)}
+input[type=range]{width:100%;accent-color:var(--sea)}
+.state-name{font-family:var(--display);font-size:1.6rem;font-weight:800;color:var(--sea)}
+/* process cards */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.pc{border:1px solid var(--line);border-radius:12px;padding:16px;background:var(--bg);display:flex;flex-direction:column;gap:8px}
+.pc .icon{width:48px;height:48px}
+.opts{display:grid;gap:8px}
+.opt{text-align:left;border:2px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:9px 12px}
+.opt.right{border-color:var(--good);background:color-mix(in srgb,var(--good) 15%,var(--surface))}
+.opt.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 15%,var(--surface))}
+.why{font-size:.95rem;color:var(--muted)}
+/* precipitation */
+.precip{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+.pt{border:1px solid var(--line);border-radius:12px;padding:14px;background:var(--bg);display:flex;flex-direction:column;gap:6px}
+.layers{display:flex;flex-direction:column;border-radius:8px;overflow:hidden;font-size:.78rem;font-weight:700;text-align:center}
+.layers span{padding:3px}
+.warm{background:#ffd9b3;color:#6b3300}.cold{background:#cfe9ff;color:#0a3d66}.storm{background:#9aa9b8;color:#14212c}
+/* builder */
+.scene{position:relative;width:100%;aspect-ratio:16/10;max-width:100%;border-radius:14px;overflow:hidden;border:2px solid var(--line);background:#bfe6f7}
+.scene canvas{position:absolute;inset:0;width:100%;height:100%}
+.zone{position:absolute;transform:translate(-50%,-50%);font-size:clamp(.6rem,1.7vw,.92rem);font-weight:700;border:2px dashed #0f2a3a;background:rgba(255,255,255,.82);color:#0f2a3a;border-radius:10px;padding:3px 8px;min-width:clamp(64px,14vw,120px);text-align:center}
+.zone.ok{border-style:solid;border-color:#1d7a43;background:#e3f7ea}
+.zone.now{background:#fff3c4;border-color:#c98a00;box-shadow:0 0 0 4px rgba(233,169,28,.45)}
+.zone.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translate(-56%,-50%)}75%{transform:translate(-44%,-50%)}}
+.parts,.bank{display:flex;flex-wrap:wrap;gap:8px}
+.part{border:2px solid var(--line);background:var(--bg);color:var(--ink);border-radius:12px;padding:8px 12px;font-weight:700}
+.part.on{border-color:var(--leaf);background:color-mix(in srgb,var(--leaf) 16%,var(--surface))}
+.lab{border:2px solid var(--sea);background:var(--surface);color:var(--sea);border-radius:999px;padding:7px 14px;font-weight:700;touch-action:none;user-select:none}
+.lab.sel{background:var(--sea);color:#fff}
+.ghost{position:fixed;z-index:70;pointer-events:none;transform:translate(-50%,-50%)}
+.stepbox{border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px;background:var(--bg)}
+.stepbox[hidden]{display:none}
+.stagebar{display:flex;gap:6px;flex-wrap:wrap}
+.stagebar span{border:2px solid var(--line);border-radius:999px;padding:3px 10px;font-size:.9rem;font-weight:700;color:var(--muted)}
+.stagebar span.now{border-color:var(--sun);background:color-mix(in srgb,var(--sun) 25%,var(--surface));color:var(--ink)}
+.wx{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}
+.wx button{text-align:left;border:2px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:9px 12px}
+.wx button[aria-pressed=true]{border-color:var(--sea);background:color-mix(in srgb,var(--sea) 14%,var(--surface))}
+input[type=text]{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px;max-width:260px;width:100%}
+#caption{min-height:3.2em;font-size:1.05rem}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.tabs button{border:2px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:7px 16px;font-weight:700;display:flex;flex-direction:column;align-items:flex-start;line-height:1.2}
+.tabs button small{font-weight:400;color:var(--muted);font-size:.78rem}
+.tabs button[aria-selected=true]{background:var(--sea);border-color:var(--sea);color:#fff}
+.tabs button[aria-selected=true] small{color:#e3f1f6}
+.passage{border:1px solid var(--line);border-radius:12px;padding:16px 18px;background:var(--bg);display:flex;flex-direction:column;gap:10px}
+.passage h3{color:var(--sea)}
+.tablewrap{overflow-x:auto}
+.passage table{border-collapse:collapse;min-width:420px;width:100%;font-variant-numeric:tabular-nums;background:var(--surface)}
+.passage th,.passage td{border:1px solid var(--line);padding:6px 10px;text-align:center}
+.tabscore{font-weight:700;color:var(--leaf)}
+.q{border-top:1px solid var(--line);padding-top:14px;display:flex;flex-direction:column;gap:8px}
+.badge{display:flex;gap:16px;align-items:center;border:2px solid var(--sun);border-radius:14px;padding:16px;background:color-mix(in srgb,var(--sun) 14%,var(--surface))}
+.score{font-family:var(--display);font-size:1.6rem;font-weight:800}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:50}
+footer{color:var(--muted);font-size:.85rem;text-align:center}
+@media (prefers-reduced-motion:reduce){.zone.shake{animation:none}}
+</style>
+
+<canvas id="confetti"></canvas>
+<div class="wrap">
+
+<header class="hero" data-read>
+  <span class="eyebrow">5th Grade Science · Earth Systems</span>
+  <h1>The Water Cycle Lab</h1>
+  <p>The water you drank today is very old. It has traveled from oceans to clouds to rivers and back again for millions of years. A dinosaur may have drunk some of it! In this lab you will learn how water moves around Earth. Then you will build your own water cycle and watch it come to life.</p>
+  <div class="row"><button class="btn listen" data-listen>Listen</button><button class="btn" id="voiceToggle" aria-pressed="true">Voice: On</button></div>
+  <div class="chips" aria-label="Florida standards">
+    <span class="chip">SC.5.E.7.1 Model the water cycle</span>
+    <span class="chip">SC.5.E.7.2 The ocean and Earth's water</span>
+    <span class="chip">SC.5.E.7.4 Forms of precipitation</span>
+    <span class="chip">SC.5.P.8.1 Solids, liquids, and gases</span>
+  </div>
+</header>
+
+<div class="ican" data-read>
+  <h3>I Can Statements</h3>
+  <ul id="icanList"></ul>
+</div>
+
+<!-- 1 -->
+<section class="st" data-read>
+  <div class="sec-head"><div><div class="num">Station 1</div><h2>Where Is Earth's Water?</h2></div><button class="btn listen" data-listen>Listen</button></div>
+  <p class="ican-tag">I can explain why the ocean is an important part of the water cycle.</p>
+  <p>Picture all of Earth's water as 100 squares. Almost all of it, 97 squares, is salty ocean water. About 2 squares are frozen in glaciers and ice caps. Only about 1 square is fresh liquid water in lakes, rivers, the ground, and the air. The water cycle connects all of these places.</p>
+  <div class="grid100" id="grid100" role="img" aria-label="100 squares: 97 ocean, 2 ice, 1 fresh liquid water"></div>
+  <div class="legend"><span><i style="background:var(--sea)"></i>Ocean (salt water)</span><span><i style="background:#dff3ff;outline:1px solid var(--sky)"></i>Ice and glaciers</span><span><i style="background:var(--leaf)"></i>Lakes, rivers, groundwater, air</span></div>
+  <p class="key">Most of the water vapor in our air comes from the ocean. When ocean water evaporates, the salt stays behind. That is why rain is fresh water.</p>
+</section>
+
+<!-- 2 -->
+<section class="st">
+  <div class="sec-head" data-read><div><div class="num">Station 2</div><h2>Water Changes Its State</h2></div><button class="btn listen" data-listen>Listen</button></div>
+  <p class="ican-tag" data-read>I can explain how water changes between a solid, a liquid, and a gas.</p>
+  <p data-read>Water can be a <b>solid</b> (ice), a <b>liquid</b> (water), or a <b>gas</b> (water vapor). Adding heat energy makes the tiny particles move faster. Taking heat away slows them down. Slide the heat bar and watch the particles.</p>
+  <div class="states">
+    <canvas id="box" aria-label="Water particles in a box"></canvas>
+    <div class="row" style="flex-direction:column;align-items:stretch;gap:10px">
+      <label for="heat"><b>Heat energy</b></label>
+      <input type="range" id="heat" min="0" max="100" value="10">
+      <div class="state-name" id="stateName">Solid: Ice</div>
+      <p id="stateInfo" aria-live="polite"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="st">
+  <div class="sec-head" data-read><div><div class="num">Station 3</div><h2>The Steps of the Cycle</h2></div><button class="btn listen" data-listen>Listen</button></div>
+  <p class="ican-tag" data-read>I can describe evaporation, transpiration, condensation, precipitation, and collection.</p>
+  <p data-read>Read each card, then answer its quick check. You get one try.</p>
+  <div class="cards" id="cards"></div>
+</section>
+
+<!-- 4 -->
+<section class="st">
+  <div class="sec-head" data-read><div><div class="num">Station 4</div><h2>Rain, Snow, Sleet, or Hail?</h2></div><button class="btn listen" data-listen>Listen</button></div>
+  <p class="ican-tag" data-read>I can tell the difference between rain, snow, sleet, and hail.</p>
+  <p data-read>Precipitation is any water that falls from clouds. The <b>temperature of the air</b> between the cloud and the ground decides what form it takes. Freezing is 32 degrees Fahrenheit.</p>
+  <div class="precip" id="precip"></div>
+  <h3 data-read>Weather Detective</h3>
+  <div id="detective"></div>
+</section>
+
+<!-- 5 -->
+<section class="st" id="lab">
+  <div class="sec-head" data-read><div><div class="num">Station 5</div><h2>Build Your Own Water Cycle</h2></div><button class="btn listen" data-listen>Listen</button></div>
+  <p class="ican-tag" data-read>I can create a model of the water cycle and explain each part.</p>
+  <p data-read>Scientists use models to explain how things work. Build your model in four steps. When you are done, press Run and your water cycle will move on its own while the narrator explains it.</p>
+
+  <div class="scene" id="scene"><canvas id="sc"></canvas></div>
+  <p id="caption" aria-live="polite"></p>
+
+  <div class="stepbox" id="step1">
+    <h3>Step 1: Add the parts of your model</h3>
+    <div class="parts" id="parts"></div>
+  </div>
+  <div class="stepbox" id="step2" hidden>
+    <h3>Step 2: Label the arrows</h3>
+    <p>Drag a word onto the right spot, or tap a word and then tap a spot.</p>
+    <div class="bank" id="bank"></div>
+  </div>
+  <div class="stepbox" id="step3" hidden>
+    <h3>Step 3: Choose your weather</h3>
+    <p><b>What is the air like between the cloud and the ground?</b></p>
+    <div class="wx" id="wx"></div>
+    <label for="sun"><b>How strong is the sun?</b> <span id="sunOut">Medium</span></label>
+    <input type="range" id="sun" min="1" max="3" value="2">
+    <label for="dropName"><b>Name your water drop</b></label>
+    <input type="text" id="dropName" placeholder="Drippy" maxlength="16">
+  </div>
+  <div class="stepbox" id="step4" hidden>
+    <h3>Step 4: Run your water cycle</h3>
+    <div class="stagebar" id="stagebar"></div>
+    <div class="row"><button class="btn primary" id="run">Run my water cycle</button><button class="btn" id="pause" disabled>Pause</button></div>
+  </div>
+</section>
+
+<!-- 6 reading -->
+<section class="st" id="reading">
+  <div class="sec-head" data-read><div><div class="num">Station 6</div><h2>Read Like a Scientist</h2></div><button class="btn listen" data-listen>Listen</button></div>
+  <p class="ican-tag" data-read>I can read science texts to find facts, explain ideas, and use evidence to support a claim.</p>
+  <p data-read>Each tab has a different passage. The questions get harder from Level 1 to Level 3. Read the passage first, then answer. You get one try on each question.</p>
+  <div class="tabs" role="tablist" id="readTabs"></div>
+  <div id="readPanels"></div>
+</section>
+
+<!-- 7 -->
+<section class="st" id="practice">
+  <div class="sec-head" data-read><div><div class="num">Station 7</div><h2>Show What You Know</h2></div><button class="btn listen" data-listen>Listen</button></div>
+  <p data-read>Answer each question. You get one try, so read carefully. Press Listen to hear a question.</p>
+  <div id="quiz"></div>
+  <div id="result" aria-live="polite"></div>
+</section>
+
+<footer>Water Cycle Lab · Created by Donna Rees</footer>
+</div>
+
+<script>
+(function(){
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const store={get(k,d){try{const v=localStorage.getItem('wc_'+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem('wc_'+k,JSON.stringify(v))}catch(e){}}};
+
+/* ================= Google US English voice only ================= */
+let voice=null,voiceOn=store.get('voiceOn',true),warned=false;
+function pickVoice(){if(!('speechSynthesis' in window))return null;const vs=speechSynthesis.getVoices();voice=vs.find(v=>v.name==='Google US English')||vs.find(v=>/google/i.test(v.name)&&/en[-_]US/i.test(v.lang))||null;return voice}
+function getVoice(){return new Promise(res=>{if(pickVoice())return res(voice);let n=0;const t=setInterval(()=>{if(pickVoice()||++n>20){clearInterval(t);res(voice)}},100)})}
+if('speechSynthesis' in window){pickVoice();speechSynthesis.onvoiceschanged=pickVoice}
+function toast(msg){let t=$('#vtoast');if(!t){t=document.createElement('div');t.id='vtoast';t.setAttribute('role','status');t.style.cssText='position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;z-index:60;max-width:90vw;font-size:.95rem';document.body.appendChild(t)}t.textContent=msg;t.hidden=false;clearTimeout(t._h);t._h=setTimeout(()=>t.hidden=true,4000)}
+function clean(t){return t.replace(/SC\.\d+\.[A-Z]+\.\d+\.\d+/g,'').replace(/\b(Listen|Voice: On|Voice: Off)\b/g,'').replace(/\s+/g,' ').trim()}
+let speakId=0;
+async function speak(t,onEnd,force){const id=++speakId;const done=()=>{if(id===speakId&&onEnd)onEnd()};
+ if(!('speechSynthesis' in window)||(!voiceOn&&!force)){done();return}
+ speechSynthesis.cancel();const v=await getVoice();if(id!==speakId)return;
+ if(!v){if(!warned){toast('The Google US English voice is not available on this device.');warned=true}done();return}
+ const chunks=(clean(t).match(/[^.!?]+[.!?]*/g)||[]).map(s=>s.trim()).filter(Boolean);
+ if(!chunks.length){done();return}
+ const safety=setTimeout(done,chunks.join(' ').split(' ').length*450+2500); /* in case Chrome never fires onend */
+ chunks.forEach((s,i)=>{const u=new SpeechSynthesisUtterance(s);u.voice=v;u.lang=v.lang;u.rate=.95;if(i===chunks.length-1)u.onend=()=>{clearTimeout(safety);done()};speechSynthesis.speak(u)})}
+function stopSpeech(){speakId++;try{speechSynthesis.cancel()}catch(e){}}
+function textOf(el){const c=el.cloneNode(true);c.querySelectorAll('.chips,button,svg,canvas,input').forEach(n=>n.remove());return c.innerText}
+$$('[data-listen]').forEach(b=>b.addEventListener('click',()=>{const sec=b.closest('section,header');const parts=sec.matches('[data-read]')?[sec]:[...sec.querySelectorAll('[data-read]')];speak(parts.map(textOf).join('. '),null,true)}));
+const vt=$('#voiceToggle');function vtSet(){vt.setAttribute('aria-pressed',voiceOn);vt.textContent='Voice: '+(voiceOn?'On':'Off')}vtSet();
+vt.onclick=()=>{voiceOn=!voiceOn;store.set('voiceOn',voiceOn);vtSet();if(!voiceOn)stopSpeech()};
+
+/* ================= I Can statements ================= */
+const ICAN=['I can explain how water changes between a solid, a liquid, and a gas.','I can describe evaporation, transpiration, condensation, precipitation, and collection.','I can create a model of the water cycle and explain each part.','I can explain why the ocean is an important part of the water cycle.','I can tell the difference between rain, snow, sleet, and hail.','I can read science texts to find facts, explain ideas, and use evidence to support a claim.'];
+const ic=store.get('ican',{});
+ICAN.forEach((s,i)=>{const li=document.createElement('li');li.innerHTML=`<input type="checkbox" id="ic${i}" ${ic[i]?'checked':''}><label for="ic${i}">${s}</label>`;li.querySelector('input').onchange=e=>{ic[i]=e.target.checked;store.set('ican',ic)};$('#icanList').appendChild(li)});
+
+/* ================= Station 1 grid ================= */
+for(let i=0;i<100;i++){const s=document.createElement('span');if(i>=97)s.className=i===99?'fresh':'ice';$('#grid100').appendChild(s)}
+
+/* ================= Station 2 particles ================= */
+const box=$('#box'),bx=box.getContext('2d');let BW=300,BH=200;
+function sizeBox(){const r=box.getBoundingClientRect(),d=devicePixelRatio||1;box.width=r.width*d;box.height=r.height*d;BW=r.width;BH=r.height;bx.setTransform(d,0,0,d,0,0)}
+new ResizeObserver(sizeBox).observe(box);sizeBox();
+const P=[];for(let r=0;r<5;r++)for(let c=0;c<7;c++)P.push({hx:.5+(c-3)*.075,hy:.82-r*.1,x:0,y:0,vx:0,vy:0});
+P.forEach(p=>{p.x=p.hx;p.y=p.hy});
+let heat=10,lastState='solid';
+const SI={solid:['Solid: Ice','The particles are packed tightly in a pattern. They only wiggle in place. Ice keeps its own shape.'],
+ liquid:['Liquid: Water','The particles slide past each other. A liquid takes the shape of its container, but it keeps the same amount.'],
+ gas:['Gas: Water Vapor','The particles zoom around and spread out to fill the whole space. Water vapor is invisible!']};
+const CH={'solid>liquid':'You added heat, so the ice is MELTING into liquid water.','liquid>solid':'You took heat away, so the water is FREEZING into ice.','liquid>gas':'You added heat, so the water is EVAPORATING into water vapor.','gas>liquid':'You took heat away, so the vapor is CONDENSING back into liquid water.','solid>gas':'Lots of heat changed the ice all the way into vapor.','gas>solid':'Removing lots of heat turned the vapor all the way into ice.'};
+function stateOf(h){return h<34?'solid':h<67?'liquid':'gas'}
+function setState(){const s=stateOf(heat);$('#stateName').textContent=SI[s][0];let msg=SI[s][1];if(s!==lastState){msg=CH[lastState+'>'+s]+' '+msg;speak(CH[lastState+'>'+s])}$('#stateInfo').textContent=msg;lastState=s}
+$('#heat').oninput=e=>{heat=+e.target.value;setState()};setState();
+function boxLoop(){const s=stateOf(heat);const css=getComputedStyle(document.body);
+ P.forEach(p=>{if(s==='solid'){const j=.002+heat/34*.004;p.x+=(p.hx-p.x)*.2+(Math.random()-.5)*j;p.y+=(p.hy-p.y)*.2+(Math.random()-.5)*j;p.vx=p.vy=0}
+  else if(s==='liquid'){p.vy+=.0009;p.vx+=(Math.random()-.5)*.002;p.vy+=(Math.random()-.5)*.002;p.vx*=.92;p.vy*=.92}
+  else{const sp=.006+(heat-67)/33*.008;p.vx+=(Math.random()-.5)*.002;p.vy+=(Math.random()-.5)*.002;const m=Math.hypot(p.vx,p.vy)||1;p.vx=p.vx/m*sp;p.vy=p.vy/m*sp}
+  if(s!=='solid'){p.x+=p.vx;p.y+=p.vy;if(p.x<.04){p.x=.04;p.vx=Math.abs(p.vx)}if(p.x>.96){p.x=.96;p.vx=-Math.abs(p.vx)}if(p.y<.05){p.y=.05;p.vy=Math.abs(p.vy)}if(p.y>.93){p.y=.93;p.vy=-Math.abs(p.vy)*(s==='gas'?1:.3)}}});
+ if(s==='liquid')for(let i=0;i<P.length;i++)for(let k=i+1;k<P.length;k++){const a=P[i],b=P[k],dx=b.x-a.x,dy=(b.y-a.y)*1.5,d=Math.hypot(dx,dy);if(d<.07&&d>0){const f=(.07-d)*.25;a.x-=dx/d*f;a.y-=dy/d*f;b.x+=dx/d*f;b.y+=dy/d*f}}
+ bx.clearRect(0,0,BW,BH);const col=s==='solid'?'#7cc4f0':s==='liquid'?css.getPropertyValue('--sea'):'#9bd7f5';
+ P.forEach(p=>{bx.beginPath();bx.arc(p.x*BW,p.y*BH,Math.max(5,BW*.022),0,7);bx.fillStyle=col;bx.globalAlpha=s==='gas'?.7:1;bx.fill()});bx.globalAlpha=1;
+ requestAnimationFrame(boxLoop)}
+boxLoop();
+
+/* ================= One-try question helper ================= */
+const saved=store.get('answers',{});
+function makeQ(id,q,opts,c,why,host,onAnswer){const d=document.createElement('div');d.className='q';
+ d.innerHTML=`<div class="sec-head"><b>${q}</b><button class="btn listen">Listen</button></div><div class="opts"></div><p class="why" hidden></p>`;
+ d.querySelector('.listen').onclick=()=>speak(q+' '+opts.map((o,k)=>String.fromCharCode(65+k)+'. '+o).join('. '),null,true);
+ const ob=d.querySelector('.opts'),w=d.querySelector('.why');
+ opts.forEach((o,k)=>{const b=document.createElement('button');b.className='opt';b.id=id+'_'+k;b.textContent=String.fromCharCode(65+k)+'. '+o;b.onclick=()=>{if(saved[id]!=null)return;saved[id]=k;store.set('answers',saved);lock(true)};ob.appendChild(b)});
+ function lock(fresh){if(saved[id]==null)return;[...ob.children].forEach((b,k)=>{b.disabled=true;if(k===c)b.classList.add('right');else if(k===saved[id])b.classList.add('wrong')});w.hidden=false;const ok=saved[id]===c;w.innerHTML=`<b style="color:var(--${ok?'good':'bad'})">${ok?'Correct!':'Not quite.'}</b> ${why}`;if(fresh)speak((ok?'Correct! ':'Not quite. ')+why);onAnswer&&onAnswer()}
+ lock(false);host.appendChild(d)}
+
+/* ================= Station 3 cards ================= */
+const ICON={
+ evap:'<svg class="icon" viewBox="0 0 48 48"><circle cx="38" cy="10" r="6" fill="#e9a91c"/><path d="M4 40q6-4 12 0t12 0 12 0 4 0v8H4z" fill="#0d68a6"/><path d="M14 34v-14m-4 4 4-4 4 4M26 34v-18m-4 4 4-4 4 4" stroke="#3fa9d8" stroke-width="3" fill="none" stroke-linecap="round"/></svg>',
+ trans:'<svg class="icon" viewBox="0 0 48 48"><rect x="22" y="30" width="5" height="16" fill="#7a5230"/><circle cx="24" cy="24" r="12" fill="#2f8f57"/><path d="M16 12v-8m-3 3 3-3 3 3M32 12v-8m-3 3 3-3 3 3" stroke="#3fa9d8" stroke-width="3" fill="none" stroke-linecap="round"/></svg>',
+ cond:'<svg class="icon" viewBox="0 0 48 48"><path d="M12 32a8 8 0 0 1 2-16 11 11 0 0 1 21 2 7 7 0 0 1 1 14z" fill="#b9c7d3"/><circle cx="14" cy="40" r="2" fill="#3fa9d8"/><circle cx="24" cy="42" r="2" fill="#3fa9d8"/><circle cx="34" cy="40" r="2" fill="#3fa9d8"/></svg>',
+ prec:'<svg class="icon" viewBox="0 0 48 48"><path d="M10 24a8 8 0 0 1 2-16 11 11 0 0 1 21 2 7 7 0 0 1 1 14z" fill="#7d8c99"/><path d="M14 30l-3 8M24 30l-3 8M34 30l-3 8" stroke="#0d68a6" stroke-width="3" stroke-linecap="round"/></svg>',
+ coll:'<svg class="icon" viewBox="0 0 48 48"><path d="M4 8l20 22h20v18H4z" fill="#8a6a45"/><path d="M8 14q8 10 16 16t20 6" stroke="#3fa9d8" stroke-width="4" fill="none"/><path d="M4 40h40v8H4z" fill="#0d68a6"/></svg>'};
+const CARDS=[
+ ['evap','Evaporation','The sun heats water in oceans, lakes, and puddles. The water gains energy and changes from a liquid into an invisible gas called water vapor. The vapor rises into the air.','A puddle on the playground is gone by the afternoon. Where did the water go?',['It soaked into the sun','It evaporated into water vapor in the air','It turned into ice'],1,'The sun\'s heat turned the liquid puddle into water vapor, a gas.'],
+ ['trans','Transpiration','Plants pull water up from their roots. Water vapor escapes through tiny holes in their leaves. This is like plants "sweating," and it adds water vapor to the air.','Which part of a plant releases water vapor during transpiration?',['Leaves','Roots','Seeds'],0,'Tiny openings on leaves let water vapor escape into the air.'],
+ ['cond','Condensation','High in the sky the air is cooler. Water vapor loses heat and changes back into tiny liquid droplets. Billions of droplets together make a cloud. You see condensation when a cold drink "sweats."','What makes water vapor condense into a cloud?',['It gains heat','It cools down and loses heat','It mixes with salt'],1,'Cooling takes energy away, so the gas turns back into liquid droplets.'],
+ ['prec','Precipitation','Cloud droplets bump together and grow. When they get too heavy for the air to hold, they fall to Earth as rain, snow, sleet, or hail.','Why does water fall out of a cloud?',['The droplets get too heavy','The sun pushes it down','The cloud runs out of air'],0,'Droplets join until they are too heavy to float, and gravity pulls them down.'],
+ ['coll','Collection','Water lands and collects in oceans, lakes, and rivers. Some flows downhill over land as runoff. Some soaks into the soil to become groundwater. Most water ends up back in the ocean, and the cycle starts again.','Rain flows down a hill into a river. What is this called?',['Condensation','Runoff','Transpiration'],1,'Water moving over the land into streams and rivers is runoff.']];
+CARDS.forEach(([k,t,txt,q,o,c,w])=>{const d=document.createElement('div');d.className='pc';d.innerHTML=`${ICON[k]}<h3 data-read>${t}</h3><p data-read>${txt}</p><button class="btn listen" style="align-self:flex-start">Listen</button>`;
+ d.querySelector('.listen').onclick=()=>speak(t+'. '+txt,null,true);makeQ('card_'+k,'Quick check: '+q,o,c,w,d);$('#cards').appendChild(d)});
+
+/* ================= Station 4 precipitation ================= */
+[['Rain','Liquid drops fall when the air is above freezing all the way from the cloud to the ground.',['warm','Warm air'],['warm','Warm air']],
+ ['Snow','Ice crystals fall when the air is below freezing all the way down. They never melt.',['cold','Freezing air'],['cold','Freezing air']],
+ ['Sleet','Snow falls through a warm layer and melts. Then it falls through freezing air near the ground and refreezes into tiny ice pellets.',['warm','Warm layer'],['cold','Freezing near ground']],
+ ['Hail','In tall thunderstorms, strong winds blow drops up high where they freeze. They fall and get blown up again and again, adding layers of ice.',['storm','Strong updrafts'],['storm','Thunderstorm']]].forEach(([n,t,a,b])=>{
+ const d=document.createElement('div');d.className='pt';d.innerHTML=`<h3>${n}</h3><div class="layers" aria-hidden="true"><span class="storm">Cloud</span><span class="${a[0]}">${a[1]}</span><span class="${b[0]}">${b[1]}</span><span style="background:#a07a4c;color:#fff">Ground</span></div><p>${t}</p><button class="btn listen" style="align-self:flex-start">Listen</button>`;
+ d.querySelector('.listen').onclick=()=>speak(n+'. '+t,null,true);$('#precip').appendChild(d)});
+makeQ('det1','It is January in Michigan. The temperature is 20°F from the clouds all the way to the ground. What will fall?',['Rain','Snow','Hail'],1,'Below freezing all the way down means ice crystals never melt, so it snows.',$('#detective'));
+makeQ('det2','It is a hot July afternoon in Florida. A tall, dark thunderstorm forms with strong winds blowing upward. Balls of ice bounce on the ground. What is it?',['Hail','Sleet','Snow'],0,'Hail forms in thunderstorms, even in summer, because updrafts carry drops high enough to freeze in layers.',$('#detective'));
+makeQ('det3','Snow melts in a warm layer of air, then refreezes into tiny ice pellets just above the ground. What is it?',['Rain','Hail','Sleet'],2,'Melting, then refreezing near the ground, makes sleet.',$('#detective'));
+
+/* ================= Station 5: the model ================= */
+const sc=$('#sc'),cx=sc.getContext('2d'),W=960,H=600;
+function sizeSc(){const r=sc.getBoundingClientRect(),d=devicePixelRatio||1;sc.width=r.width*d;sc.height=r.height*d;cx.setTransform(r.width*d/W,0,0,r.height*d/H,0,0)}
+new ResizeObserver(sizeSc).observe(sc);sizeSc();
+
+const PARTS=[
+ ['sun','Sun','The sun is the engine of the water cycle. Its heat energy makes water evaporate.'],
+ ['ocean','Ocean','The ocean holds most of Earth\'s water. Most of the water vapor in the air comes from the ocean.'],
+ ['mountain','Mountain','When air is pushed up a mountain, it cools. That helps clouds form and precipitation fall.'],
+ ['trees','Plants','Plants release water vapor from their leaves. This is transpiration.'],
+ ['lake','Lake and River','Rivers carry runoff downhill to lakes and back to the ocean.'],
+ ['cloud','Cloud','Clouds are made of tiny drops of liquid water or ice, not water vapor.']];
+const LABELS=[
+ ['evap','Evaporation',200,375,'This spot is above the ocean, where the sun heats the water and it rises as a gas.'],
+ ['trans','Transpiration',470,355,'This spot is above the plants. What do leaves give off?'],
+ ['cond','Condensation',640,40,'This spot is at the cloud, where cool air turns vapor into droplets.'],
+ ['prec','Precipitation',545,265,'This spot is under the cloud, where water falls to Earth.'],
+ ['run','Runoff',735,395,'This spot is on the mountain slope, where water flows downhill.'],
+ ['coll','Collection',170,545,'This spot is where water gathers in the ocean.']];
+const WX=[['rain','Warm air from the cloud to the ground'],['snow','Freezing air from the cloud to the ground'],['sleet','A warm layer up high, then freezing air near the ground'],['hail','A tall thunderstorm with strong winds blowing up']];
+const PNAME={rain:'rain',snow:'snow',sleet:'sleet',hail:'hail'};
+const M=Object.assign({parts:{},labels:{},wx:'rain',sun:2,name:''},store.get('model',{}));
+function saveM(){store.set('model',M)}
+let selLab=null;
+
+/* parts buttons */
+PARTS.forEach(([k,n,f])=>{const b=document.createElement('button');b.className='part'+(M.parts[k]?' on':'');b.id='part_'+k;b.textContent=(M.parts[k]?'✓ ':'+ ')+n;
+ b.onclick=()=>{M.parts[k]=true;b.className='part on';b.textContent='✓ '+n;saveM();$('#caption').textContent=n+': '+f;speak(n+'. '+f);gate()};$('#parts').appendChild(b)});
+/* zones + bank */
+const zones={};
+LABELS.forEach(([k,n,x,y])=>{const z=document.createElement('button');z.className='zone';z.dataset.k=k;z.style.left=(x/W*100)+'%';z.style.top=(y/H*100)+'%';z.textContent='?';z.hidden=true;z.onclick=()=>{if(selLab)place(selLab,z)};$('#scene').appendChild(z);zones[k]=z});
+const order=[...LABELS].sort(()=>Math.random()-.5);
+order.forEach(([k,n])=>{if(M.labels[k])return;const c=document.createElement('button');c.className='lab';c.dataset.k=k;c.textContent=n;$('#bank').appendChild(c);dragify(c)});
+function dragify(c){let st=null,gh=null;
+ c.addEventListener('pointerdown',e=>{st={x:e.clientX,y:e.clientY};c.setPointerCapture(e.pointerId)});
+ c.addEventListener('pointermove',e=>{if(!st)return;if(!gh&&Math.hypot(e.clientX-st.x,e.clientY-st.y)>8){gh=c.cloneNode(true);gh.classList.add('ghost','sel');document.body.appendChild(gh)}if(gh){gh.style.left=e.clientX+'px';gh.style.top=e.clientY+'px'}});
+ c.addEventListener('pointerup',e=>{if(gh){gh.remove();gh=null;const el=document.elementFromPoint(e.clientX,e.clientY);const z=el&&el.closest('.zone');if(z)place(c,z)}else{$$('.lab').forEach(l=>l.classList.remove('sel'));if(selLab===c)selLab=null;else{selLab=c;c.classList.add('sel')}}st=null});
+ c.addEventListener('pointercancel',()=>{if(gh)gh.remove();gh=null;st=null})}
+function place(chip,z){const k=z.dataset.k;if(M.labels[k])return;
+ if(chip.dataset.k===k){M.labels[k]=true;saveM();chip.remove();selLab=null;setZone(k);const L=LABELS.find(l=>l[0]===k);const f=CARDS.find(c=>c[0]===k);const msg='Yes! '+L[1]+'. '+(f?f[2].split('. ')[0]+'.':'Water flows downhill over the land into rivers and lakes.');$('#caption').textContent=msg;speak(msg);gate()}
+ else{z.classList.remove('shake');void z.offsetWidth;z.classList.add('shake');const msg='Not that one. '+LABELS.find(l=>l[0]===k)[4];$('#caption').textContent=msg;speak(msg)}}
+function setZone(k){const z=zones[k];z.textContent=LABELS.find(l=>l[0]===k)[1];z.classList.add('ok')}
+Object.keys(M.labels).forEach(setZone);
+/* weather */
+WX.forEach(([k,t])=>{const b=document.createElement('button');b.textContent=t;b.dataset.k=k;b.setAttribute('aria-pressed',M.wx===k);
+ b.onclick=()=>{M.wx=k;saveM();$$('#wx button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.k===k));const msg={rain:'Warm air all the way down means your cloud will make rain.',snow:'Freezing air all the way down means your cloud will make snow. Watch it pile up on the mountain.',sleet:'Snow will melt in the warm layer, then refreeze near the ground. Your cloud will make sleet.',hail:'Strong updrafts in a thunderstorm will make hail.'}[k];$('#caption').textContent=msg;speak(msg)};$('#wx').appendChild(b)});
+const SUN=['','Low','Medium','High'];$('#sun').value=M.sun;$('#sunOut').textContent=SUN[M.sun];
+$('#sun').oninput=e=>{M.sun=+e.target.value;$('#sunOut').textContent=SUN[M.sun];saveM()};
+$('#dropName').value=M.name;$('#dropName').oninput=e=>{M.name=e.target.value;saveM()};
+function allParts(){return PARTS.every(p=>M.parts[p[0]])}
+function allLabels(){return LABELS.every(l=>M.labels[l[0]])}
+function gate(){const ap=allParts(),al=allLabels();$('#step2').hidden=!ap||al;Object.values(zones).forEach(z=>z.hidden=!ap);$('#step3').hidden=!al;$('#step4').hidden=!al;
+ if(ap&&!al&&!gate.s2){gate.s2=true}}
+gate();
+if(!allParts())$('#caption').textContent='Tap each part to add it to your model.';
+
+/* ---------- simulation ---------- */
+const OCEAN_X=400,GROUND=440,PEAK={x:800,y:200},CLOUD={x:640,y:120};
+function surfY(x){if(M.parts.mountain&&x>=620&&x<=960)return x<=800?GROUND-(x-620)/180*240:PEAK.y+(x-800)/160*240;return GROUND}
+let vapor=[],fall=[],flow=[],soak=[],spark=[],cloudWater=18,snowCap=store.get('snow',0),t0=performance.now();
+const RIVER=[[650,444],[560,452],[395,448],[300,470]];
+function runoffPath(x,y){return[[x,y],...RIVER]}
+function along(path,d){for(let i=0;i<path.length-1;i++){const[a,b]=[path[i],path[i+1]];const L=Math.hypot(b[0]-a[0],b[1]-a[1]);if(d<=L){const f=d/L;return[a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f]}d-=L}return null}
+let running=false,paused=false,stages=[],si=0,stageStart=0,spoken=true,pauseAt=0;
+const STAGE_NAME={evap:'Evaporation',trans:'Transpiration',cond:'Condensation',prec:'Precipitation',coll:'Collection'};
+const DUR={evap:6500,trans:4500,cond:5000,prec:7000,coll:7500};
+function nm(){return(M.name||'').trim()||'Drippy'}
+function narr(s){const n=nm();return{
+ evap:`The sun heats the ocean. ${n} gains energy and evaporates. It changes from liquid water into an invisible gas called water vapor and rises into the sky.`,
+ trans:`Plants release water vapor from their leaves too. This is called transpiration. More vapor rises to join ${n}.`,
+ cond:`High in the sky, the air is cooler. The water vapor loses heat and condenses into tiny liquid droplets. Billions of droplets make a cloud. ${n} is now part of the cloud.`,
+ prec:{rain:`The droplets grow too heavy and fall as rain. The air is warm all the way down, so ${n} falls as a liquid raindrop.`,snow:`The air is below freezing all the way down, so ${n} falls as a snowflake. Snow piles up on the mountain.`,sleet:`${n} falls as snow, melts in a warm layer, then refreezes near the ground into a tiny ice pellet. That is sleet.`,hail:`Strong winds in the thunderstorm toss ${n} up and down, adding layers of ice. It falls as hail.`}[M.wx],
+ coll:`The water collects. Some flows downhill as runoff into the river and lake. Some soaks into the ground as groundwater. ${n} flows back to the ocean, and the cycle starts again!`}[s]}
+function buildBar(){$('#stagebar').innerHTML=stages.map((s,i)=>`<span id="sb_${s}">${i+1}. ${STAGE_NAME[s]}</span>`).join('')}
+function startStage(i){si=i;stageStart=performance.now();const s=stages[si];$$('#stagebar span').forEach(x=>x.classList.toggle('now',x.id==='sb_'+s));
+ Object.entries(zones).forEach(([k,z])=>z.classList.toggle('now',k===s||(s==='coll'&&k==='run')));
+ const text=narr(s);$('#caption').textContent=text;spoken=false;speak(text,()=>{spoken=true})}
+$('#run').onclick=()=>{stages=['evap'].concat(M.parts.trees?['trans']:[],['cond','prec','coll']);buildBar();running=true;paused=false;$('#pause').disabled=false;$('#pause').textContent='Pause';$('#run').textContent='Restart';drop.reset();startStage(0);ic[2]=true;store.set('ican',ic);$('#ic2').checked=true};
+$('#pause').onclick=()=>{paused=!paused;$('#pause').textContent=paused?'Play':'Pause';if(paused){pauseAt=performance.now();stopSpeech();spoken=true}else{stageStart+=performance.now()-pauseAt}};
+
+/* named drop */
+const drop={x:220,y:445,form:'liquid',reset(){this.x=220;this.y=445;this.form='liquid';this.hit=null}};
+function updateDrop(p){const s=stages[si];const lerp=(a,b,f)=>a+(b-a)*f,e=f=>f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+ if(s==='evap'){drop.form='gas';drop.x=lerp(220,CLOUD.x-30,e(p));drop.y=lerp(440,CLOUD.y+10,e(p))+Math.sin(p*20)*6}
+ else if(s==='trans'){drop.form='gas';drop.x=CLOUD.x-30+Math.sin(p*6)*8;drop.y=CLOUD.y+10}
+ else if(s==='cond'){drop.form=p>.4?'liquid':'gas';drop.x=CLOUD.x-20;drop.y=CLOUD.y+14+Math.sin(p*8)*3}
+ else if(s==='prec'){drop.form=M.wx==='rain'?'liquid':M.wx==='snow'?'snow':'ice';const tx=720,ty=surfY(720)-8;drop.x=lerp(CLOUD.x-20,tx,Math.min(1,p*1.3));drop.y=lerp(CLOUD.y+20,ty,Math.min(1,p*1.3))}
+ else if(s==='coll'){drop.form='liquid';const path=runoffPath(720,surfY(720)-6).concat([[220,470]]);let L=0;for(let i=0;i<path.length-1;i++)L+=Math.hypot(path[i+1][0]-path[i][0],path[i+1][1]-path[i][1]);const pt=along(path,L*e(p))||[220,470];drop.x=pt[0];drop.y=pt[1]-6}}
+
+function emit(s,dt){const rate=M.sun;
+ if((s==='evap'||s==='trans')&&M.parts.ocean&&Math.random()<.25*rate)vapor.push({x:20+Math.random()*360,y:GROUND,a:0});
+ if((s==='evap'||s==='trans')&&M.parts.lake&&Math.random()<.05*rate)vapor.push({x:520+Math.random()*80,y:450,a:0});
+ if(s==='trans'&&M.parts.trees&&Math.random()<.35)vapor.push({x:440+Math.random()*80,y:390,a:0,tree:1});
+ if(s==='prec'&&M.parts.cloud&&cloudWater>12){const n=M.wx==='hail'?1:2;for(let i=0;i<n;i++)if(Math.random()<.8){fall.push({x:CLOUD.x-110+Math.random()*230,y:CLOUD.y+40,vy:M.wx==='snow'?1.2:M.wx==='hail'?7:M.wx==='sleet'?5:6,ph:Math.random()*6});cloudWater-=.12}}
+ if(s==='cond'&&Math.random()<.5)spark.push({x:CLOUD.x-120+Math.random()*240,y:CLOUD.y-40+Math.random()*90,a:1});
+ if(s==='coll'&&snowCap>0&&M.wx!=='snow'&&Math.random()<.3){snowCap=Math.max(0,snowCap-.004);flow.push({path:runoffPath(780,surfY(780)),d:0})}}
+
+function step(s){
+ vapor.forEach(v=>{v.a=Math.min(.75,v.a+.03);const tx=CLOUD.x+(Math.random()-.5)*200;v.x+=(tx-v.x)*.004+(Math.random()-.5)*1.2;v.y-=1.1+M.sun*.35;if(v.y<CLOUD.y+30){v.dead=1;if(M.parts.cloud)cloudWater=Math.min(100,cloudWater+.35)}});
+ fall.forEach(f=>{f.y+=f.vy;if(M.wx==='snow')f.x+=Math.sin(f.y/18+f.ph)*.9;const sy=f.x<OCEAN_X?GROUND:surfY(f.x);if(f.y>=sy){f.dead=1;
+  if(f.x>=OCEAN_X){if(M.wx==='snow'){if(sy<400)snowCap=Math.min(1,snowCap+.003)}else if(M.parts.mountain&&f.x>=620&&Math.random()<.6)flow.push({path:runoffPath(f.x,sy),d:0});else if(Math.random()<.5)soak.push({x:f.x,y:sy})}}});
+ flow.forEach(f=>{f.d+=2.6;f.pt=along(f.path,f.d);if(!f.pt)f.dead=1});
+ soak.forEach(g=>{if(g.y<550)g.y+=.8;else g.x-=1.1;if(g.x<OCEAN_X)g.dead=1});
+ spark.forEach(p=>{p.a-=.03;if(p.a<=0)p.dead=1});
+ if(s==='cond')cloudWater=Math.min(100,cloudWater+.05);
+ [vapor,fall,flow,soak,spark].forEach(a=>{for(let i=a.length-1;i>=0;i--)if(a[i].dead)a.splice(i,1)});
+ if(vapor.length>400)vapor.splice(0,vapor.length-400)}
+
+function cloudShape(x,y,s,col){cx.fillStyle=col;[[0,0,48],[-50,12,36],[50,12,38],[-90,26,26],[90,26,28],[-25,-28,36],[28,-22,34]].forEach(([dx,dy,r])=>{cx.beginPath();cx.arc(x+dx*s,y+dy*s,r*s,0,7);cx.fill()});cx.fillRect(x-95*s,y+20*s,190*s,26*s)}
+function arrow(pts,col){cx.save();cx.strokeStyle=col;cx.lineWidth=4;cx.setLineDash([10,8]);cx.beginPath();cx.moveTo(pts[0][0],pts[0][1]);cx.quadraticCurveTo(pts[1][0],pts[1][1],pts[2][0],pts[2][1]);cx.stroke();cx.setLineDash([]);
+ const[a,b]=[pts[1],pts[2]],ang=Math.atan2(b[1]-a[1],b[0]-a[0]);cx.fillStyle=col;cx.beginPath();cx.moveTo(b[0],b[1]);cx.lineTo(b[0]-16*Math.cos(ang-.45),b[1]-16*Math.sin(ang-.45));cx.lineTo(b[0]-16*Math.cos(ang+.45),b[1]-16*Math.sin(ang+.45));cx.fill();cx.restore()}
+
+function draw(now){const s=running?stages[si]:null;const t=(now-t0)/1000;
+ const storm=s==='prec'?1:0;
+ const g=cx.createLinearGradient(0,0,0,GROUND);g.addColorStop(0,storm?'#7fa8c2':'#8fd3f4');g.addColorStop(1,storm?'#c4d6df':'#e3f6fd');cx.fillStyle=g;cx.fillRect(0,0,W,H);
+ if(M.parts.sun){cx.save();cx.translate(95,85);cx.rotate(t*.3);cx.strokeStyle='#f3b72a';cx.lineWidth=5;for(let i=0;i<12;i++){cx.rotate(Math.PI/6);cx.beginPath();cx.moveTo(56,0);cx.lineTo(74+(i%2)*8,0);cx.stroke()}cx.restore();cx.fillStyle='#ffd23f';cx.beginPath();cx.arc(95,85,46,0,7);cx.fill()}
+ /* ground */
+ cx.fillStyle='#8cc66b';cx.fillRect(OCEAN_X-40,GROUND,W,14);cx.fillStyle='#a77d4f';cx.fillRect(OCEAN_X-40,GROUND+14,W,H);
+ cx.fillStyle='rgba(63,169,216,.35)';cx.fillRect(OCEAN_X-40,532,W,40);cx.fillStyle='#5b4029';cx.font='bold 18px sans-serif';cx.fillText('groundwater',830,560);
+ if(M.parts.mountain){cx.fillStyle='#7f8f77';cx.beginPath();cx.moveTo(620,GROUND+1);cx.lineTo(PEAK.x,PEAK.y);cx.lineTo(960,GROUND+1);cx.fill();cx.fillStyle='#6b7a63';cx.beginPath();cx.moveTo(PEAK.x,PEAK.y);cx.lineTo(960,GROUND+1);cx.lineTo(880,GROUND+1);cx.fill();
+  const c=Math.max(.18,snowCap);cx.fillStyle='#ffffff';cx.beginPath();cx.moveTo(PEAK.x,PEAK.y-1);const dy=30+c*120;cx.lineTo(PEAK.x-dy*.75,PEAK.y+dy);for(let i=0;i<=6;i++){const x=PEAK.x-dy*.75+i*(dy*1.42/6);cx.lineTo(x,PEAK.y+dy-(i%2)*14)}cx.lineTo(PEAK.x+dy*.67,PEAK.y+dy);cx.fill()}
+ if(M.parts.lake){cx.strokeStyle='#3fa9d8';cx.lineWidth=9;cx.lineCap='round';cx.beginPath();cx.moveTo(660,GROUND+3);cx.quadraticCurveTo(610,455,560,452);cx.quadraticCurveTo(480,450,OCEAN_X-10,448);cx.stroke();cx.fillStyle='#2f92c9';cx.beginPath();cx.ellipse(560,452,70,13,0,0,7);cx.fill()}
+ if(M.parts.trees){[[455,1],[505,1.2],[560,.9]].forEach(([x,k])=>{cx.fillStyle='#6b4a2b';cx.fillRect(x-6*k,GROUND-40*k,12*k,42*k);cx.fillStyle='#2f8f57';cx.beginPath();cx.arc(x,GROUND-52*k,26*k,0,7);cx.arc(x-16*k,GROUND-38*k,18*k,0,7);cx.arc(x+16*k,GROUND-38*k,18*k,0,7);cx.fill()})}
+ if(M.parts.ocean){cx.fillStyle='#0d68a6';cx.beginPath();cx.moveTo(0,H);cx.lineTo(0,GROUND);for(let x=0;x<=OCEAN_X;x+=10)cx.lineTo(x,GROUND+Math.sin(x/30+t*2)*5);cx.lineTo(OCEAN_X+30,H);cx.fill();cx.fillStyle='rgba(255,255,255,.8)';cx.font='bold 22px sans-serif';cx.fillText('OCEAN',40,500)}
+ else{cx.fillStyle='#d9c08f';cx.fillRect(0,GROUND,OCEAN_X,H)}
+ /* arrows */
+ if(allParts()){const ac='rgba(15,42,58,.55)';arrow([[200,430],[170,330],[260,220]],ac);if(M.parts.trees)arrow([[500,380],[500,320],[540,230]],ac);arrow([[480,110],[530,60],[570,70]],ac);arrow([[560,190],[540,260],[560,340]],ac);if(M.parts.mountain)arrow([[780,250],[740,330],[680,420]],ac);arrow([[360,460],[300,500],[230,520]],ac)}
+ /* particles */
+ vapor.forEach(v=>{cx.fillStyle=`rgba(255,255,255,${v.a})`;cx.beginPath();cx.arc(v.x,v.y,v.tree?3:3.5,0,7);cx.fill()});
+ if(M.parts.cloud){const sc2=.8+cloudWater/130;const dark=Math.min(1,cloudWater/90);const c=Math.round(250-dark*110);cloudShape(CLOUD.x,CLOUD.y,sc2,`rgb(${c},${c+4},${c+10})`);cloudShape(CLOUD.x-260,70,.45,'rgba(255,255,255,.85)')}
+ spark.forEach(p=>{cx.fillStyle=`rgba(13,104,166,${p.a})`;cx.beginPath();cx.arc(p.x,p.y,2.5,0,7);cx.fill()});
+ fall.forEach(f=>{if(M.wx==='rain'){cx.strokeStyle='#1c7cc0';cx.lineWidth=2.5;cx.beginPath();cx.moveTo(f.x,f.y);cx.lineTo(f.x-2,f.y+12);cx.stroke()}
+  else if(M.wx==='snow'){cx.strokeStyle='#ffffff';cx.lineWidth=2;for(let i=0;i<3;i++){const a=i*Math.PI/3;cx.beginPath();cx.moveTo(f.x-5*Math.cos(a),f.y-5*Math.sin(a));cx.lineTo(f.x+5*Math.cos(a),f.y+5*Math.sin(a));cx.stroke()}}
+  else{cx.fillStyle=M.wx==='hail'?'#f4fbff':'#cde9fb';cx.strokeStyle='#6d93ad';cx.lineWidth=1;cx.beginPath();cx.arc(f.x,f.y,M.wx==='hail'?6:3,0,7);cx.fill();cx.stroke()}});
+ flow.forEach(f=>{if(!f.pt)return;cx.fillStyle='#1c7cc0';cx.beginPath();cx.arc(f.pt[0],f.pt[1]-3,4,0,7);cx.fill()});
+ soak.forEach(g=>{cx.fillStyle='#2a8fd0';cx.beginPath();cx.arc(g.x,g.y,3.5,0,7);cx.fill()});
+ /* named drop */
+ if(running){const{x,y,form}=drop;cx.save();cx.translate(x,y);
+  if(form==='gas'){cx.globalAlpha=.55;cx.fillStyle='#ffffff';cx.beginPath();cx.arc(0,0,15,0,7);cx.fill();cx.globalAlpha=1}
+  else if(form==='snow'){cx.strokeStyle='#ffffff';cx.lineWidth=4;for(let i=0;i<3;i++){const a=i*Math.PI/3;cx.beginPath();cx.moveTo(-17*Math.cos(a),-17*Math.sin(a));cx.lineTo(17*Math.cos(a),17*Math.sin(a));cx.stroke()}}
+  else{cx.fillStyle=form==='ice'?'#d7f0ff':'#1f8fe0';cx.strokeStyle='#0f2a3a';cx.lineWidth=2;cx.beginPath();cx.moveTo(0,-22);cx.bezierCurveTo(14,-4,16,4,16,8);cx.arc(0,8,16,0,Math.PI);cx.bezierCurveTo(-16,4,-14,-4,0,-22);cx.fill();cx.stroke()}
+  cx.fillStyle='#0f2a3a';cx.beginPath();cx.arc(-5,6,2.6,0,7);cx.arc(5,6,2.6,0,7);cx.fill();cx.strokeStyle='#0f2a3a';cx.lineWidth=2;cx.beginPath();cx.arc(0,10,5,.2,Math.PI-.2);cx.stroke();
+  cx.font='bold 17px sans-serif';cx.textAlign='center';const label=nm();const w=cx.measureText(label).width+14;cx.fillStyle='rgba(255,255,255,.9)';cx.fillRect(-w/2,-50,w,22);cx.fillStyle='#0f2a3a';cx.fillText(label,0,-33);cx.restore()}}
+
+function frame(now){
+ if(running&&!paused){const s=stages[si];const el=now-stageStart;const p=Math.min(1,el/DUR[s]);emit(s);step(s);updateDrop(p);
+  if(el>=DUR[s]&&spoken){if(si===stages.length-1){drop.reset();startStage(0)}else startStage(si+1)}}
+ else if(!running){step(null)}
+ draw(now);requestAnimationFrame(frame)}
+requestAnimationFrame(frame);
+setInterval(()=>store.set('snow',snowCap),3000);
+
+/* ================= Station 6 DOK reading ================= */
+const READ=[
+ {k:'dok1',tab:'Level 1',sub:'Find the facts',title:'The Journey of a Raindrop',
+  text:`<p>Every raindrop is on a long trip. It might begin in the Atlantic Ocean. When the sun warms the ocean, some of the water evaporates and rises into the air as water vapor. Water vapor is a gas, so you cannot see it.</p><p>As the vapor rises, the air around it gets colder. The cold air makes the vapor condense into tiny drops of liquid water. Millions of these tiny drops gather together to form a cloud.</p><p>Inside the cloud, the drops bump into each other and join. They grow bigger and heavier. When they are too heavy to float, they fall to the ground as precipitation.</p><p>When the raindrop lands, it may flow into a stream, soak into the soil, or be taken up by the roots of a plant. Sooner or later, most water makes its way back to the ocean. Then the journey begins again.</p>`,
+  qs:[['According to the passage, what happens when the sun warms the ocean?',['The ocean water turns into salt','Some of the water evaporates and rises as water vapor','The water freezes into ice','The water sinks to the bottom of the ocean'],1,'The passage says that when the sun warms the ocean, some water evaporates and rises into the air as water vapor.'],
+   ['Why can\'t you see water vapor?',['It is too far away','It is a gas','It is a solid','It is hidden inside clouds'],1,'The passage states, "Water vapor is a gas, so you cannot see it."'],
+   ['What forms when millions of tiny drops gather together?',['A stream','A plant','A cloud','An ocean'],2,'The passage says millions of tiny drops gather together to form a cloud.'],
+   ['Which word from the passage means "to change from a gas into a liquid"?',['Evaporates','Condense','Float','Soak'],1,'In the passage, cold air makes the vapor condense into tiny drops of liquid water.']]},
+ {k:'dok2',tab:'Level 2',sub:'Explain the ideas',title:'Florida\'s Afternoon Thunderstorms',
+  text:`<p>On many summer days in Florida, the morning is bright and sunny. By three o'clock, dark clouds roll in and thunder booms. An hour later, the sun is shining again. Why does this happen almost every day?</p><p>Florida is a peninsula, which means it has water on three sides. In the morning, the hot summer sun heats the land faster than it heats the ocean. Warm air over the land rises. Cooler, moist air from the ocean flows in to take its place. This is called a sea breeze.</p><p>Sea breezes from the Atlantic Ocean on the east coast and the Gulf on the west coast move inland and meet over the middle of the state. When they crash together, the moist air is pushed high into the sky. The air cools, and the water vapor condenses into tall clouds. By afternoon, the clouds are heavy with water, and storms pour down rain.</p><p>These storms are short, but they are very important. They give Florida much of its rain during the summer months. The rain fills lakes, waters crops, and refills the water stored underground.</p>`,
+  qs:[['What is the main idea of the passage?',['Florida is a peninsula with water on three sides','Thunder is loud and can be scary','Sea breezes push moist air up to form Florida\'s summer storms, which bring important rain','Storms in Florida only last one hour'],2,'This answer covers the whole passage: how the storms form and why they matter. The other choices are only small details.'],
+   ['What causes the sea breeze?',['The land heats faster than the ocean, so warm air rises and cooler ocean air flows in','The ocean is warmer than the land in the morning','Thunderstorms push air toward the beach','Rain cools the land'],0,'Paragraph 2 explains the cause: land heats faster, warm air rises, and moist ocean air moves in to replace it.'],
+   ['How is most of this passage organized?',['In alphabetical order','Cause and effect','Compare and contrast two states','Problem and solution'],1,'The passage explains causes, like the land heating up and breezes meeting, and their effect, the afternoon storms.'],
+   ['Which step of the water cycle happens when the moist air is pushed high into the sky and cools?',['Evaporation','Collection','Condensation','Transpiration'],2,'When water vapor cools, it condenses into the tiny drops that make clouds.']]},
+ {k:'dok3',tab:'Level 3',sub:'Use evidence',title:'The Mystery of the Shrinking Pond',
+  text:`<p>Ms. Ortiz's fifth grade class noticed that the pond behind their school seemed to be getting smaller. They decided to investigate. Every Friday for four weeks, they measured how deep the pond was. They also counted the number of sunny days and measured the rainfall each week.</p><div class="tablewrap"><table><thead><tr><th>Week</th><th>Pond depth</th><th>Sunny days</th><th>Rainfall</th></tr></thead><tbody><tr><td>1</td><td>48 inches</td><td>5</td><td>0.2 inches</td></tr><tr><td>2</td><td>45 inches</td><td>6</td><td>0 inches</td></tr><tr><td>3</td><td>41 inches</td><td>7</td><td>0 inches</td></tr><tr><td>4</td><td>44 inches</td><td>2</td><td>2.5 inches</td></tr></tbody></table></div><p>Two students shared their ideas. Maya said, "The pond is shrinking because the ducks and other animals are drinking the water." Jordan said, "The pond is shrinking because the sun is making the water evaporate."</p><p>The class agreed that a good scientist looks at the evidence before deciding who is right.</p>`,
+  qs:[['Whose claim is better supported by the data, and why?',['Maya\'s, because animals live near the pond','Jordan\'s, because the pond dropped the most during the sunniest weeks with no rain','Maya\'s, because the pond got deeper in Week 4','Jordan\'s, because it rained in Week 1'],1,'The pond went down the most when there were more sunny days and no rain. That pattern points to evaporation. The data does not show anything about animals.'],
+   ['Which evidence BEST explains why the pond got deeper in Week 4?',['There were 7 sunny days','The class measured on a Friday','There were 2.5 inches of rain and only 2 sunny days','The pond was 41 inches deep in Week 3'],2,'More rain added water through precipitation, and fewer sunny days meant less evaporation.'],
+   ['Suppose Week 5 has 7 sunny days and no rain. What will MOST LIKELY happen to the pond?',['It will get deeper than 44 inches','It will stay exactly 44 inches','It will get shallower than 44 inches','It will freeze'],2,'In Week 3, 7 sunny days and no rain made the pond drop 4 inches. The same weather would likely make it drop again.'],
+   ['The class wants to test whether sunlight makes water evaporate faster. Which investigation is BEST?',['Put two identical pans of water in the sun and in the shade, then measure the water each day','Count the ducks at the pond each morning','Measure the pond only on rainy days','Ask other classes what they think'],0,'A fair test changes only one thing, sun or shade, and measures the result. That is how scientists test a claim.'],
+   ['How does the pond connect to the larger water cycle?',['Pond water stays in the pond forever','Water that evaporates from the pond can condense into clouds and fall as precipitation somewhere else','Ponds only get water from the ocean','The pond makes its own rain'],1,'Evaporated pond water becomes vapor, condenses into clouds, and returns to Earth as precipitation. It may land far away.']]}];
+const tabs=$('#readTabs'),panels=$('#readPanels');
+function tabScore(r,el){const done=r.qs.every((_,i)=>saved[r.k+'_'+i]!=null);if(!done){el.textContent='';return}const s=r.qs.reduce((a,q,i)=>a+(saved[r.k+'_'+i]===q[2]?1:0),0);el.textContent=`${r.tab} score: ${s} out of ${r.qs.length}`}
+READ.forEach((r,ri)=>{const b=document.createElement('button');b.setAttribute('role','tab');b.id='tab_'+r.k;b.innerHTML=`${r.tab}<small>${r.sub}</small>`;tabs.appendChild(b);
+ const p=document.createElement('div');p.setAttribute('role','tabpanel');p.id='panel_'+r.k;p.style.cssText='display:flex;flex-direction:column;gap:12px';
+ p.innerHTML=`<div class="passage"><div class="sec-head"><h3>${r.title}</h3><button class="btn listen">Listen to the passage</button></div>${r.text}</div><div class="qs"></div><p class="tabscore" aria-live="polite"></p>`;
+ const pass=p.querySelector('.passage');p.querySelector('.listen').onclick=()=>{const c=pass.cloneNode(true);c.querySelectorAll('button,table').forEach(n=>n.remove());speak(c.innerText,null,true)};
+ const sc=p.querySelector('.tabscore');r.qs.forEach(([q,o,c,w],i)=>makeQ(r.k+'_'+i,(i+1)+'. '+q,o,c,w,p.querySelector('.qs'),()=>tabScore(r,sc)));tabScore(r,sc);
+ panels.appendChild(p);b.onclick=()=>showTab(r.k)});
+function showTab(k){READ.forEach(r=>{$('#tab_'+r.k).setAttribute('aria-selected',r.k===k);$('#panel_'+r.k).hidden=r.k!==k});store.set('readTab',k)}
+showTab(store.get('readTab','dok1'));
+
+/* ================= Station 7 quiz ================= */
+const Q=[
+ ['What gives water the energy it needs to evaporate?',['The moon','The sun','The wind','The ground'],1,'The sun\'s heat energy drives evaporation. It is the engine of the water cycle.'],
+ ['A cold can of juice has drops of water on the outside on a hot day. Which process made the drops?',['Evaporation','Precipitation','Condensation','Transpiration'],2,'Water vapor in the warm air touched the cold can, lost heat, and condensed into liquid drops.'],
+ ['Water vapor is water in which state of matter?',['Solid','Liquid','Gas','Ice'],2,'Water vapor is an invisible gas.'],
+ ['Why is the ocean such an important part of the water cycle?',['It holds most of Earth\'s water, and most evaporation happens there','It is the only place where rain falls','It stops water from evaporating','It is where all clouds are made of salt'],0,'About 97 percent of Earth\'s water is in the ocean, and it supplies most of the water vapor in the air.'],
+ ['The air is below freezing from the cloud all the way to the ground. What kind of precipitation will fall?',['Rain','Snow','Sleet','Hail'],1,'Ice crystals that never pass through warm air fall as snow.'],
+ ['Snow falls through a warm layer of air and melts. Then it falls through freezing air and refreezes into ice pellets. What is it?',['Hail','Rain','Snow','Sleet'],3,'Melting and then refreezing near the ground makes sleet.'],
+ ['Hail most often forms in which kind of weather?',['Tall thunderstorms with strong upward winds','Calm, sunny days','Light fog','Cold, clear nights'],0,'Updrafts in thunderstorms toss drops up high again and again, adding layers of ice.'],
+ ['Rain flows down a mountain into a river. What is this called?',['Condensation','Runoff','Evaporation','Transpiration'],1,'Water flowing over the land into streams and rivers is runoff.'],
+ ['Kai\'s water cycle model shows evaporation, condensation, and precipitation. Which step should he add to complete the cycle?',['Collection','Melting','Freezing','Erosion'],0,'Water must collect in oceans, lakes, and the ground before it can evaporate again and repeat the cycle.']];
+const qh=$('#quiz');
+Q.forEach(([q,o,c,w],i)=>makeQ('quiz_'+i,(i+1)+'. '+q,o,c,w,qh,finish));
+let celebrated=Q.every((_,i)=>saved['quiz_'+i]!=null);
+function finish(){if(!Q.every((_,i)=>saved['quiz_'+i]!=null))return;const s=Q.reduce((a,q,i)=>a+(saved['quiz_'+i]===q[2]?1:0),0);
+ const title=s===Q.length?'Water Cycle Scientist':s>=7?'Cloud Expert':'Raindrop in Training';
+ $('#result').innerHTML=`<div class="badge"><svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="var(--sun)"/><path d="M32 12c10 14 14 20 14 27a14 14 0 0 1-28 0c0-7 4-13 14-27z" fill="#1f8fe0"/><circle cx="27" cy="38" r="2.5" fill="#0f2a3a"/><circle cx="37" cy="38" r="2.5" fill="#0f2a3a"/></svg><div><div class="score">${s} out of ${Q.length}</div><p>You earned the title <b>${title}</b>!${s<Q.length?' Read the explanations for any you missed.':''} Now go back to the top and check off the I Can statements you have mastered.</p></div></div>`;
+ if(!celebrated){celebrated=true;burst();speak(`You scored ${s} out of ${Q.length}. You earned the title ${title}!`)}}
+finish();
+
+function burst(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const cv=$('#confetti'),x=cv.getContext('2d');cv.width=innerWidth;cv.height=innerHeight;
+ const cs=['#0d68a6','#3fa9d8','#e9a91c','#2f8f57','#ffffff'];const D=Array.from({length:150},()=>({x:Math.random()*cv.width,y:-20-Math.random()*cv.height*.3,v:2+Math.random()*3,r:Math.random()*6,c:cs[Math.random()*5|0],s:5+Math.random()*5}));let t=0;
+ (function f(){x.clearRect(0,0,cv.width,cv.height);D.forEach(p=>{p.y+=p.v;p.x+=Math.sin((t+p.r)/12);x.fillStyle=p.c;x.beginPath();x.arc(p.x,p.y,p.s/2,0,7);x.fill()});if(++t<220)requestAnimationFrame(f);else x.clearRect(0,0,cv.width,cv.height)})()}
+})();
+</script>
